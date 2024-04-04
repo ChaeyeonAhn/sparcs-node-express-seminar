@@ -5,14 +5,16 @@ import {SAPIBase} from "../tools/api";
 import "./css/account.css";
 
 const AccountPage = () => {
-  const [ SAPIKEY, setSAPIKEY ] = React.useState<string>("");
+  const [ username, setUSERNAME ] = React.useState<string>("");
+  const [ password, setPASSWORD ] = React.useState<string>("");
+
   const [ NBalance, setNBalance ] = React.useState<number | "Not Authorized">("Not Authorized");
   const [ NTransaction, setNTransaction ] = React.useState<number>(0);
 
   const getAccountInformation = () => {
     const asyncFun = async() => {
       interface IAPIResponse { balance: number };
-      const { data } = await axios.post<IAPIResponse>(SAPIBase + '/account/getInfo', { credential: SAPIKEY });
+      const { data } = await axios.post<IAPIResponse>(SAPIBase + '/account/getInfo', { credentialID: username, credentialPW: password });
       setNBalance(data.balance);
     }
     asyncFun().catch((e) => window.alert(`AN ERROR OCCURED: ${e}`));
@@ -21,7 +23,7 @@ const AccountPage = () => {
   const performTransaction = ( amount: number ) => {
     const asyncFun = async() => {
       interface IAPIResponse { success: boolean, balance: number, msg: string };
-      const { data } = await axios.post<IAPIResponse>(SAPIBase + '/account/transaction', { credential: SAPIKEY, amount: NBalance });
+      const { data } = await axios.post<IAPIResponse>(SAPIBase + '/account/transaction', { credentialID: username, credentialPW: password, amount: amount });
       setNTransaction(0);
       if (!data.success) {
         window.alert('Transaction Failed:' + data.msg);
@@ -39,7 +41,9 @@ const AccountPage = () => {
       <Header/>
       <h2>Account</h2>
       <div className={"account-token-input"}>
-        Enter API Key: <input type={"text"} value={SAPIKEY} onChange={e => setSAPIKEY(e.target.value)}/>
+        Enter Username: <input type={"text"} value={username} onChange={e => setUSERNAME(e.target.value)}/>
+        <br />
+        Enter Password: <input type={"text"} value={password} onChange={e => setPASSWORD(e.target.value)}/>
         <button onClick={e => getAccountInformation()}>GET</button>
       </div>
       <div className={"account-bank"}>
