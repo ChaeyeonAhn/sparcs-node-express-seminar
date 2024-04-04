@@ -54,6 +54,20 @@ class FeedDB {
             return false;
         }
     }
+
+    modifyItem = async ( id, item ) => {
+        const { title, content } = item;
+        try {
+            const res = await FeedModel.findByIdAndUpdate(id, {
+               title: title, 
+               content: content 
+              });
+            return true;
+        } catch (e) {
+            console.log(`[Feed-DB] Modify Error: ${ e }`);
+            return false;
+        }
+    }
 }
 
 const feedDBInst = FeedDB.getInst();
@@ -90,6 +104,18 @@ router.post('/deleteFeed', async (req, res) => {
     } catch (e) {
         return res.status(500).json({ error: e });
     }
+});
+
+router.post('/modifyFeed', async (req, res) => {
+  try {
+      const { id, title, content } = req.body;
+
+      const modifyResult = await feedDBInst.modifyItem(id, { title, content });
+      if (!modifyResult) return res.status(500).json({ error: "Failed modification "})
+      else return res.status(200).json({ isOk: true});
+  } catch (e) {
+      return res.status(500).json({ error: e });
+  }
 });
 
 module.exports = router;
