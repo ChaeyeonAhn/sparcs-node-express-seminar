@@ -7,6 +7,7 @@ require('dotenv').config();
 app.use(express.json());
 
 const accountRouter = require('./routes/account');
+const feedRouter = require('./routes/feed');
 
 
 const port = process.env.PORT;
@@ -23,6 +24,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use('/account', accountRouter);
+app.use('/feed', feedRouter);
 app.use('/static', express.static(path.join(__dirname,'public')));
 
 
