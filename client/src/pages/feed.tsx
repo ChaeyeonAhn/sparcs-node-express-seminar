@@ -26,7 +26,7 @@ const FeedPage = (props: {}) => {
 
   const createNewPost = () => {
     const asyncFun = async () => {
-      await axios.post( SAPIBase + '/postFeed', { title: SNewPostTitle, content: SNewPostContent } );
+      await axios.post( SAPIBase + '/feed/postFeed', { title: SNewPostTitle, content: SNewPostContent } );
       setNPostCount(NPostCount + 1);
       setSNewPostTitle("");
       setSNewPostContent("");
@@ -45,7 +45,7 @@ const FeedPage = (props: {}) => {
 
   const modifyPost = (id: string) => {
     const asyncFun = async () => {
-      await axios.post( SAPIBase + '/modifyFeed', { id: id, title: SNewPostTitle, content: SNewPostContent });
+      await axios.post( SAPIBase + '/feed/modifyFeed', { id: id, title: SNewPostTitle, content: SNewPostContent });
       setSNewPostTitle("");
       setSNewPostContent("");
     }

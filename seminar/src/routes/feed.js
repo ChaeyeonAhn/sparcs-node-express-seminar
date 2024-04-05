@@ -36,7 +36,7 @@ class FeedDB {
         const { title, content } = item;
         try {
             const newItem = new FeedModel({ title, content });
-            const res = await newItem.save();
+            const res = await newItem.save({title: title, content: content});
             return true;
         } catch (e) {
             console.log(`[Feed-DB] Insert Error: ${ e }`);
@@ -55,10 +55,11 @@ class FeedDB {
         }
     }
 
-    modifyItem = async ( id, item ) => {
-        const { title, content } = item;
+    modifyItem = async ( id, title, content ) => {
         try {
-            const res = await FeedModel.findByIdAndUpdate(id, {
+            const OModifyFilter = { id: id };
+            const res = await FeedModel.findOneAndUpdate(OModifyFilter, 
+              {
                title: title, 
                content: content 
               });
@@ -84,14 +85,14 @@ router.get('/getFeed', async (req, res) => {
     }
 });
 
-router.post('/addFeed', async (req, res) => {
+router.post('/postFeed', async (req, res) => {
    try {
        const { title, content } = req.body;
        const addResult = await feedDBInst.insertItem({ title, content });
-       if (!addResult) return res.status(500).json({ error: dbRes.data })
+       if (!addResult) return res.status(500).json({ error: addResult.data })
        else return res.status(200).json({ isOK: true });
    } catch (e) {
-       return res.status(500).json({ error: e });
+       return res.status(500).json({ error: e }); 
    }
 });
 
@@ -109,8 +110,7 @@ router.post('/deleteFeed', async (req, res) => {
 router.post('/modifyFeed', async (req, res) => {
   try {
       const { id, title, content } = req.body;
-
-      const modifyResult = await feedDBInst.modifyItem(id, { title, content });
+      const modifyResult = await feedDBInst.modifyItem(id, title, content );
       if (!modifyResult) return res.status(500).json({ error: "Failed modification "})
       else return res.status(200).json({ isOk: true});
   } catch (e) {
